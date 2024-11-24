@@ -3,67 +3,134 @@ using System.Reflection.Metadata.Ecma335;
 
 namespace Turn_Based_Game
 {
+    /* 
+     Unit class:
+        Sets stat variables for all units
+    */
+    public class Unit
+    {
+        public required string UnitName { get; set; }
+
+        public required int MaxHp { get; set; }
+        public required  int UnitHp {  get; set; }
+        public required int UnitMp { get; set; }
+
+        public required int UnitAtk { get; set; }
+        public required int UnitMag { get; set; }
+
+        public int[] unitSkills;
+
+        public static explicit operator Unit(int v)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    
     class Program
     {
-        static void Main(string[] args)
+        // Public text variablesthat will be used throughout the battle
+        public static string playerName;
+        public static string title = "TextVenture!";
+        public static string battleText = "Battle!";
+
+        // Public player unit that saves all player state changes
+        public static Unit player = new Unit() { UnitName = playerName, MaxHp = 30, UnitHp = 30, UnitMp = 10, UnitAtk = 5, UnitMag = 8 };
+
+        private static Unit RandomEnemy()
         {
             Random rnd = new Random();
+
+            Unit slime = new Unit() { UnitName = "Slime", MaxHp = 20, UnitHp = 20, UnitMp = 5, UnitAtk = 2, UnitMag = 1 };
+            Unit goblin = new Unit() { UnitName = "Goblin", MaxHp = 40, UnitHp = 40, UnitMp = 12, UnitAtk = 6, UnitMag = 3 };
+            Unit zombie = new Unit() { UnitName = "Zombie", MaxHp = 30, UnitHp = 30, UnitMp = 10, UnitAtk = 5, UnitMag = 8 };
+
+            Unit[] enemies = [ slime, goblin, zombie ];
+
+            Unit enemy = (Unit)rnd.Next(enemies.Length);
+
+            return enemy;
+        }
+
+        // The battle method where all battles will take place
+        private static void Battle()
+        {
+            Random rnd = new Random();
+
+            Unit enemy = RandomEnemy();
+
+            int[] enemySkills = enemy.unitSkills;
+            enemySkills = [0, 1];
+
+            Console.WriteLine("");
+            Console.WriteLine("---------------------------");
+            Console.WriteLine("      " + battleText + "       ");
+            Console.WriteLine("---------------------------");
+            Console.WriteLine("");
             
-            int playerHP = 40;
-            int enemyHP = 30;
+            Console.WriteLine("An enemy is approaching! Get ready!");
 
-            int playerMP = 20;
-
-            int playerAttack = 5;
-            int playerMagic = 8;
-            
-            int enemyAttack = 5;
-            int enemyMagic = 8;
-
-            int [] enemySkills = {0, 1};
-            
-            Console.WriteLine("Welcome! What is your name?");
-            String playerName = Console.ReadLine();
-            Console.WriteLine("Hello " + playerName + "!");
-            Console.WriteLine("An enemy is approaching you! Get ready!");
-
-            while (playerHP > 0 && enemyHP > 0) 
+            while (player.UnitHp > 0 && enemy.UnitHp > 0) 
             {
-                Console.WriteLine("  \n" + playerName);
-                Console.WriteLine("HP: " + playerHP + " " + "MP: " + playerMP);
-                Console.WriteLine("Enemy HP: " + enemyHP);
+                Console.WriteLine("");
+                Console.WriteLine("  \n" + player.UnitName);
+                Console.WriteLine("HP: " + player.UnitHp + " " + "MP: " + player.UnitMp);
+                Console.WriteLine("");
+                Console.WriteLine("Enemy HP: " + enemy.UnitHp);
+                Console.WriteLine("");
                 Console.WriteLine("Your Turn! What will you do?");
-                Console.WriteLine("Press [A] to attack!\nPress [H] to heal!(Cost 5 MP)\nPress [F] to deal fire damage!(Cost 10 MP)");
+                Console.WriteLine("Press [A] to attack!\nPress [H] to heal!(Cost 3 MP)\nPress [F] to deal fire damage!(Cost 5 MP)");
                 
                 String playerChoice = Console.ReadLine();
 
                 switch (playerChoice)
                 {
                     case "a":
-                        enemyHP -= playerAttack;
-                        Console.WriteLine(playerName + " deals " + playerAttack + " damage to the enemy!");
+                        enemy.UnitHp -= player.UnitAtk;
+                        Console.WriteLine(player.UnitName + " deals " + player.UnitAtk + " damage to the enemy!");
+                        
+                        if (enemy.UnitHp <= 0)
+                        {
+                            Console.WriteLine("You won the battle!");
+                            break;
+                        }
+
                         break;
                     
                     case "h":
-                        if (playerMP < 5)
+                        if (player.UnitMp < 3)
                         {
                             Console.WriteLine("Not enought MP!");
+                            break;
                         }
                         
-                        playerHP += 5;
-                        playerMP -= 5;
-                        Console.WriteLine(playerName + " recovers " + playerAttack + " HP!");
+                        player.UnitHp += 5;
+                        player.UnitMp -= 3;
+                        
+                        if (player.UnitHp > player.MaxHp)
+                        {
+                            player.UnitHp = player.MaxHp;
+                        }
+
+                        Console.WriteLine(player.UnitName + " recovers 5 HP!");
                         break;
 
                     case "f":
-                        if (playerMP < 10)
+                        if (player.UnitMp < 5)
                         {
                             Console.WriteLine("Not enought MP!");
+                            break;
                         }
 
-                        playerMP -= 10;
-                        enemyHP -= playerMagic;
-                        Console.WriteLine(playerName + " deals " + playerMagic + " damage to the enemy!");
+                        player.UnitMp -= 5;
+                        enemy.UnitHp -= player.UnitMag;
+                        Console.WriteLine(player.UnitName + " deals " + player.UnitMag + " damage to the enemy!");
+                        
+                        if (enemy.UnitHp <= 0)
+                        {
+                            Console.WriteLine("You won the battle!");
+                            break;
+                        }
+
                         break;
                 }
 
@@ -74,23 +141,23 @@ namespace Turn_Based_Game
                 switch (enemyTurn)
                 {
                     case 0:
-                        playerHP -= enemyAttack;
-                        Console.WriteLine("The enemy punches you and deals " + enemyAttack + " damage!");
+                        player.UnitHp -= enemy.UnitAtk;
+                        Console.WriteLine("The enemy punches you and deals " + enemy.UnitAtk + " damage!");
                         break;
 
                     case 1:
-                        playerHP -= enemyMagic;
-                        Console.WriteLine("The enemy launches an ice attack that deals " + enemyMagic + " damage!");
+                        player.UnitHp -= enemy.UnitMag;
+                        Console.WriteLine("The enemy launches an ice attack that deals " + enemy.UnitMag + " damage!");
                         break;
                 }
                 
 
-                if (enemyHP <= 0) 
+                if (enemy.UnitHp <= 0) 
                 {
                     Console.WriteLine("You won the battle!");
                     break;
                 } 
-                else if (playerHP <= 0)
+                else if (player.UnitHp <= 0)
                 {
                     Console.WriteLine("Game Over!");
                     break;
@@ -98,6 +165,19 @@ namespace Turn_Based_Game
             }
 
             Console.WriteLine("Thanks for playing!");
+        }
+
+        static void Main(string[] args)
+        {
+            Console.WriteLine("---------------------------");
+            Console.WriteLine("      " + title + "       ");
+            Console.WriteLine("---------------------------");
+            Console.WriteLine("");
+            Console.WriteLine("Welcome! What is your name?");
+            playerName = Console.ReadLine();
+            Console.WriteLine("Hello " + playerName + "!");
+
+            Battle();
         }
     }
 }
