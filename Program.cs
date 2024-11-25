@@ -9,8 +9,6 @@ namespace Turn_Based_Game
     */
     public class Unit
     {
-        public required int UnitId;
-        
         public required string UnitName { get; set; }
 
         public required int MaxHp { get; set; }
@@ -19,12 +17,18 @@ namespace Turn_Based_Game
 
         public required int UnitAtk { get; set; }
         public required int UnitMag { get; set; }
+    }
 
-        public int[] unitSkills;
+    public class Enemy : Unit
+    {
+        public required int EnemyId;
 
-        public static explicit operator Unit(int v)
+        public static int[] enemySkills;
+
+        public static explicit operator Enemy(int v)
         {
-            throw new NotImplementedException();
+            v = EnemyId;
+            //throw new NotImplementedException();
         }
     }
     
@@ -36,19 +40,19 @@ namespace Turn_Based_Game
         public static string battleText = "Battle!";
 
         // Public player unit that saves all player state changes
-        public static Unit player = new Unit() { UnitId = 1, UnitName = playerName, MaxHp = 30, UnitHp = 30, UnitMp = 10, UnitAtk = 5, UnitMag = 8 };
+        public static Unit player = new Unit() { UnitName = playerName, MaxHp = 30, UnitHp = 30, UnitMp = 10, UnitAtk = 5, UnitMag = 8 };
 
         private static Unit RandomEnemy()
         {
             Random rnd = new Random();
 
-            Unit slime = new Unit() { UnitId = 2, UnitName = "Slime", MaxHp = 20, UnitHp = 20, UnitMp = 5, UnitAtk = 2, UnitMag = 1 };
-            Unit goblin = new Unit() { UnitId = 3, UnitName = "Goblin", MaxHp = 40, UnitHp = 40, UnitMp = 12, UnitAtk = 6, UnitMag = 3 };
-            Unit zombie = new Unit() { UnitId = 4, UnitName = "Zombie", MaxHp = 30, UnitHp = 30, UnitMp = 10, UnitAtk = 5, UnitMag = 8 };
+            Enemy slime = new Enemy() { EnemyId = 0, UnitName = "Slime", MaxHp = 20, UnitHp = 20, UnitMp = 5, UnitAtk = 2, UnitMag = 1 };
+            Enemy goblin = new Enemy() { EnemyId = 1, UnitName = "Goblin", MaxHp = 40, UnitHp = 40, UnitMp = 12, UnitAtk = 6, UnitMag = 3 };
+            Enemy zombie = new Enemy() { EnemyId = 2, UnitName = "Zombie", MaxHp = 30, UnitHp = 30, UnitMp = 10, UnitAtk = 5, UnitMag = 8 };
 
-            Unit[] enemies = [ slime, goblin, zombie ];
+            Enemy[] enemies = [ slime, goblin, zombie ];
 
-            Unit enemy = (Unit)rnd.Next(enemies.Length);
+            Enemy enemy = rnd.Next(enemies.Length);
 
             return enemy;
         }
@@ -60,7 +64,7 @@ namespace Turn_Based_Game
 
             Unit enemy = RandomEnemy();
 
-            int[] enemySkills = enemy.unitSkills;
+            int[] enemySkills = enemy.enemySkills;
             enemySkills = [0, 1];
 
             Console.WriteLine("");
