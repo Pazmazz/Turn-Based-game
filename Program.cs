@@ -9,6 +9,8 @@ namespace Turn_Based_Game
     */
     public class Unit
     {
+        public required int UnitId;
+        
         public required string UnitName { get; set; }
 
         public required int MaxHp { get; set; }
@@ -34,15 +36,15 @@ namespace Turn_Based_Game
         public static string battleText = "Battle!";
 
         // Public player unit that saves all player state changes
-        public static Unit player = new Unit() { UnitName = playerName, MaxHp = 30, UnitHp = 30, UnitMp = 10, UnitAtk = 5, UnitMag = 8 };
+        public static Unit player = new Unit() { UnitId = 1, UnitName = playerName, MaxHp = 30, UnitHp = 30, UnitMp = 10, UnitAtk = 5, UnitMag = 8 };
 
         private static Unit RandomEnemy()
         {
             Random rnd = new Random();
 
-            Unit slime = new Unit() { UnitName = "Slime", MaxHp = 20, UnitHp = 20, UnitMp = 5, UnitAtk = 2, UnitMag = 1 };
-            Unit goblin = new Unit() { UnitName = "Goblin", MaxHp = 40, UnitHp = 40, UnitMp = 12, UnitAtk = 6, UnitMag = 3 };
-            Unit zombie = new Unit() { UnitName = "Zombie", MaxHp = 30, UnitHp = 30, UnitMp = 10, UnitAtk = 5, UnitMag = 8 };
+            Unit slime = new Unit() { UnitId = 2, UnitName = "Slime", MaxHp = 20, UnitHp = 20, UnitMp = 5, UnitAtk = 2, UnitMag = 1 };
+            Unit goblin = new Unit() { UnitId = 3, UnitName = "Goblin", MaxHp = 40, UnitHp = 40, UnitMp = 12, UnitAtk = 6, UnitMag = 3 };
+            Unit zombie = new Unit() { UnitId = 4, UnitName = "Zombie", MaxHp = 30, UnitHp = 30, UnitMp = 10, UnitAtk = 5, UnitMag = 8 };
 
             Unit[] enemies = [ slime, goblin, zombie ];
 
