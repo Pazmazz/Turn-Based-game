@@ -23,13 +23,7 @@ namespace Turn_Based_Game
     {
         public required int EnemyId;
 
-        public static int[] enemySkills;
-
-        public static explicit operator Enemy(int v)
-        {
-            v = EnemyId;
-            //throw new NotImplementedException();
-        }
+        public int[] enemySkills;
     }
     
     class Program
@@ -42,17 +36,17 @@ namespace Turn_Based_Game
         // Public player unit that saves all player state changes
         public static Unit player = new Unit() { UnitName = playerName, MaxHp = 30, UnitHp = 30, UnitMp = 10, UnitAtk = 5, UnitMag = 8 };
 
-        private static Unit RandomEnemy()
+        private static Enemy RandomEnemy()
         {
             Random rnd = new Random();
 
             Enemy slime = new Enemy() { EnemyId = 0, UnitName = "Slime", MaxHp = 20, UnitHp = 20, UnitMp = 5, UnitAtk = 2, UnitMag = 1 };
             Enemy goblin = new Enemy() { EnemyId = 1, UnitName = "Goblin", MaxHp = 40, UnitHp = 40, UnitMp = 12, UnitAtk = 6, UnitMag = 3 };
-            Enemy zombie = new Enemy() { EnemyId = 2, UnitName = "Zombie", MaxHp = 30, UnitHp = 30, UnitMp = 10, UnitAtk = 5, UnitMag = 8 };
+            Enemy zombie = new Enemy() { EnemyId = 2, UnitName = "Zombie", MaxHp = 30, UnitHp = 30, UnitMp = 10, UnitAtk = 5, UnitMag = 5 };
 
             Enemy[] enemies = [ slime, goblin, zombie ];
 
-            Enemy enemy = rnd.Next(enemies.Length);
+            Enemy enemy = enemies[rnd.Next(enemies.Length)];
 
             return enemy;
         }
@@ -62,7 +56,7 @@ namespace Turn_Based_Game
         {
             Random rnd = new Random();
 
-            Unit enemy = RandomEnemy();
+            Enemy enemy = RandomEnemy();
 
             int[] enemySkills = enemy.enemySkills;
             enemySkills = [0, 1];
@@ -73,15 +67,14 @@ namespace Turn_Based_Game
             Console.WriteLine("---------------------------");
             Console.WriteLine("");
             
-            Console.WriteLine("An enemy is approaching! Get ready!");
+            Console.WriteLine(enemy.UnitName + " approaches you!");
 
             while (player.UnitHp > 0 && enemy.UnitHp > 0) 
             {
-                Console.WriteLine("");
                 Console.WriteLine("  \n" + player.UnitName);
                 Console.WriteLine("HP: " + player.UnitHp + " " + "MP: " + player.UnitMp);
                 Console.WriteLine("");
-                Console.WriteLine("Enemy HP: " + enemy.UnitHp);
+                Console.WriteLine(enemy.UnitName + " HP: " + enemy.UnitHp);
                 Console.WriteLine("");
                 Console.WriteLine("Your Turn! What will you do?");
                 Console.WriteLine("Press [A] to attack!\nPress [H] to heal!(Cost 3 MP)\nPress [F] to deal fire damage!(Cost 5 MP)");
@@ -92,7 +85,7 @@ namespace Turn_Based_Game
                 {
                     case "a":
                         enemy.UnitHp -= player.UnitAtk;
-                        Console.WriteLine(player.UnitName + " deals " + player.UnitAtk + " damage to the enemy!");
+                        Console.WriteLine(player.UnitName + " deals " + player.UnitAtk + " damage to the " + enemy.UnitName + "!");
                         
                         if (enemy.UnitHp <= 0)
                         {
@@ -129,7 +122,7 @@ namespace Turn_Based_Game
 
                         player.UnitMp -= 5;
                         enemy.UnitHp -= player.UnitMag;
-                        Console.WriteLine(player.UnitName + " deals " + player.UnitMag + " damage to the enemy!");
+                        Console.WriteLine(player.UnitName + " deals " + player.UnitMag + " damage to the " + enemy.UnitName +"!");
                         
                         if (enemy.UnitHp <= 0)
                         {
@@ -148,12 +141,12 @@ namespace Turn_Based_Game
                 {
                     case 0:
                         player.UnitHp -= enemy.UnitAtk;
-                        Console.WriteLine("The enemy punches you and deals " + enemy.UnitAtk + " damage!");
+                        Console.WriteLine(enemy.UnitName + " punches you and deals " + enemy.UnitAtk + " damage!");
                         break;
 
                     case 1:
                         player.UnitHp -= enemy.UnitMag;
-                        Console.WriteLine("The enemy launches an ice attack that deals " + enemy.UnitMag + " damage!");
+                        Console.WriteLine(enemy.UnitName + " enemy launches an ice attack that deals " + enemy.UnitMag + " damage!");
                         break;
                 }
                 
@@ -171,6 +164,7 @@ namespace Turn_Based_Game
             }
 
             Console.WriteLine("Thanks for playing!");
+            Console.ReadLine();
         }
 
         static void Main(string[] args)
