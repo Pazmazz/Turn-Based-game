@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection.Metadata.Ecma335;
+using System.Runtime.InteropServices.ComTypes;
 
 namespace Turn_Based_Game
 {
@@ -13,8 +14,10 @@ namespace Turn_Based_Game
 
         public required int MaxHp { get; set; }
         public required  int UnitHp {  get; set; }
+        
+        public required int MaxMp { get; set; }
         public required int UnitMp { get; set; }
-
+        
         public required int UnitAtk { get; set; }
         public required int UnitMag { get; set; }
     }
@@ -28,21 +31,33 @@ namespace Turn_Based_Game
     
     class Program
     {
+        enum GameState
+        {
+            GAMEOVER,
+            VICTORY
+        }
+
         // Public text variablesthat will be used throughout the battle
         public static string playerName;
         public static string title = "TextVenture!";
         public static string battleText = "Battle!";
+        static GameState gameState;
 
         // Public player unit that saves all player state changes
-        public static Unit player = new Unit() { UnitName = playerName, MaxHp = 30, UnitHp = 30, UnitMp = 10, UnitAtk = 5, UnitMag = 8 };
+        public static Unit player = new Unit() { UnitName = playerName, MaxHp = 30, UnitHp = 30, MaxMp = 10, UnitMp = 10, UnitAtk = 5, UnitMag = 8 };
 
-        private static Enemy RandomEnemy()
+        static void Yeild()
+        {
+            Console.ReadLine();
+        }
+
+        static Enemy RandomEnemy()
         {
             Random rnd = new Random();
 
-            Enemy slime = new Enemy() { EnemyId = 0, UnitName = "Slime", MaxHp = 20, UnitHp = 20, UnitMp = 5, UnitAtk = 2, UnitMag = 1 };
-            Enemy goblin = new Enemy() { EnemyId = 1, UnitName = "Goblin", MaxHp = 40, UnitHp = 40, UnitMp = 12, UnitAtk = 6, UnitMag = 3 };
-            Enemy zombie = new Enemy() { EnemyId = 2, UnitName = "Zombie", MaxHp = 30, UnitHp = 30, UnitMp = 10, UnitAtk = 5, UnitMag = 5 };
+            Enemy slime = new Enemy() { EnemyId = 0, UnitName = "Slime", MaxHp = 20, UnitHp = 20, MaxMp = 5, UnitMp = 5, UnitAtk = 2, UnitMag = 1 };
+            Enemy goblin = new Enemy() { EnemyId = 1, UnitName = "Goblin", MaxHp = 40, UnitHp = 40, MaxMp = 12, UnitMp = 12, UnitAtk = 6, UnitMag = 3 };
+            Enemy zombie = new Enemy() { EnemyId = 2, UnitName = "Zombie", MaxHp = 30, UnitHp = 30, MaxMp = 10, UnitMp = 10, UnitAtk = 5, UnitMag = 5 };
 
             Enemy[] enemies = [ slime, goblin, zombie ];
 
@@ -52,7 +67,7 @@ namespace Turn_Based_Game
         }
 
         // The battle method where all battles will take place
-        private static void Battle()
+        static void Battle()
         {
             Random rnd = new Random();
 
@@ -71,7 +86,7 @@ namespace Turn_Based_Game
 
             while (player.UnitHp > 0 && enemy.UnitHp > 0) 
             {
-                Console.WriteLine("  \n" + player.UnitName);
+                Console.WriteLine("  \n" + playerName);
                 Console.WriteLine("HP: " + player.UnitHp + " " + "MP: " + player.UnitMp);
                 Console.WriteLine("");
                 Console.WriteLine(enemy.UnitName + " HP: " + enemy.UnitHp);
@@ -85,8 +100,9 @@ namespace Turn_Based_Game
                 {
                     case "a":
                         enemy.UnitHp -= player.UnitAtk;
-                        Console.WriteLine(player.UnitName + " deals " + player.UnitAtk + " damage to the " + enemy.UnitName + "!");
-                        
+                        Console.WriteLine(playerName + " deals " + player.UnitAtk + " damage to the " + enemy.UnitName + "!");
+                        Yeild();
+
                         if (enemy.UnitHp <= 0)
                         {
                             Console.WriteLine("You won the battle!");
@@ -110,7 +126,8 @@ namespace Turn_Based_Game
                             player.UnitHp = player.MaxHp;
                         }
 
-                        Console.WriteLine(player.UnitName + " recovers 5 HP!");
+                        Console.WriteLine(playerName + " recovers 5 HP!");
+                        Yeild();
                         break;
 
                     case "f":
@@ -122,8 +139,9 @@ namespace Turn_Based_Game
 
                         player.UnitMp -= 5;
                         enemy.UnitHp -= player.UnitMag;
-                        Console.WriteLine(player.UnitName + " deals " + player.UnitMag + " damage to the " + enemy.UnitName +"!");
-                        
+                        Console.WriteLine(playerName + " deals " + player.UnitMag + " damage to the " + enemy.UnitName +"!");
+                        Yeild();
+
                         if (enemy.UnitHp <= 0)
                         {
                             Console.WriteLine("You won the battle!");
@@ -142,11 +160,13 @@ namespace Turn_Based_Game
                     case 0:
                         player.UnitHp -= enemy.UnitAtk;
                         Console.WriteLine(enemy.UnitName + " punches you and deals " + enemy.UnitAtk + " damage!");
+                        Yeild();
                         break;
 
                     case 1:
                         player.UnitHp -= enemy.UnitMag;
-                        Console.WriteLine(enemy.UnitName + " enemy launches an ice attack that deals " + enemy.UnitMag + " damage!");
+                        Console.WriteLine(enemy.UnitName + " enemy launches a magic attack that deals " + enemy.UnitMag + " damage!");
+                        Yeild();
                         break;
                 }
                 
@@ -154,17 +174,47 @@ namespace Turn_Based_Game
                 if (enemy.UnitHp <= 0) 
                 {
                     Console.WriteLine("You won the battle!");
+                    gameState = GameState.VICTORY;
+                    Yeild();
                     break;
                 } 
                 else if (player.UnitHp <= 0)
                 {
                     Console.WriteLine("Game Over!");
+                    gameState = GameState.GAMEOVER;
+                    Yeild();
                     break;
                 }
             }
 
-            Console.WriteLine("Thanks for playing!");
-            Console.ReadLine();
+            PlayAgain();
+        }
+
+        static void PlayAgain()
+        {
+            Console.WriteLine("Want to play again?\n[Y] Yes\n[N] No");
+            
+            String playerChoice = Console.ReadLine();
+
+            switch (playerChoice)
+            {
+                case "y":
+                    if (gameState == GameState.GAMEOVER)
+                    {
+                        player.UnitHp = player.MaxHp;
+                        player.UnitMp = player.MaxMp;
+                    }
+                    Battle();
+                    break;
+
+                case "n":
+                    Console.WriteLine("Thanks for playing!");
+                    break;
+
+                case default:
+                    Console.WriteLine("Thanks for playing!");
+                    break;
+            }
         }
 
         static void Main(string[] args)
