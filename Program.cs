@@ -20,11 +20,10 @@ namespace Turn_Based_Game
         
         public required int UnitAtk { get; set; }
         public required int UnitMag { get; set; }
-
-        public int exp = 0;
+        
         public int lvl = 0;
 
-        static void LevelUp()
+        public static void LevelUp()
         {
             // TODO: add code to increase player stats and world lvl
         }
@@ -42,6 +41,7 @@ namespace Turn_Based_Game
     
     class Program
     {
+        // Enums that determines if the player has won or lost a battle. This is to determine if the player needs their stats reset or not
         enum GameState
         {
             GAMEOVER,
@@ -196,7 +196,7 @@ namespace Turn_Based_Game
                 if (enemy.UnitHp <= 0) 
                 {
                     Console.WriteLine("You won the battle!");
-                    player.exp = 5;
+                    Unit.LevelUp();
                     battleCount++;
                     gameState = GameState.VICTORY;
                     Yeild();
