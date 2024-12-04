@@ -334,6 +334,11 @@ namespace Turn_Based_Game
 
         static void PlayAgain()
         {
+            if (battleCount > 5)
+            {
+                Console.WriteLine("Congradulations, you won! Would you like to play again?\n[Y] Yes\n[N] No");
+            }
+            
             Console.WriteLine("Want to play again?\n[Y] Yes\n[N] No");
             
             String playerChoice = Console.ReadLine();
