@@ -59,6 +59,7 @@ namespace Turn_Based_Game
         // Public player unit that saves all player stat changes
         public static Unit player = new Unit() { UnitName = playerName, MaxHp = 30, UnitHp = 30, MaxMp = 10, UnitMp = 10, UnitAtk = 5, UnitMag = 8 };
 
+        // Stops the printing of text until the player presses continue
         static void Yeild()
         {
             Console.ReadLine();
