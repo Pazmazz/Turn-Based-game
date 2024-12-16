@@ -96,6 +96,15 @@ namespace Turn_Based_Game
         */
         public static Unit player = new Unit() { UnitName = playerName, MaxHp = 30, UnitHp = 30, MaxMp = 10, UnitMp = 10, UnitAtk = 5, UnitMag = 8 };
 
+        /* 
+         * Variables that determine the mp cost for each skill
+         * It's added to the player level so it scales properly throughout the game
+         * Heal amount scales of the players max hp and heals 40% percent of it
+        */
+        public static int healCost = 3 + worldlvl;
+        public static int magCost = 5 + worldlvl;
+        public static double healAmount = (int)player.MaxHp * 0.4;
+
         /*
          * The Yeild() function exist to pause the text so the player has time to read everything going on in the battle
         */
@@ -113,9 +122,9 @@ namespace Turn_Based_Game
         {
             Random rnd = new Random();
 
-            Enemy slime = new Enemy() { UnitName = "Slime", MaxHp = 13, UnitHp = 13, MaxMp = 5, UnitMp = 5, UnitAtk = 2, UnitMag = 1 };
-            Enemy goblin = new Enemy() { UnitName = "Goblin", MaxHp = 20, UnitHp = 20, MaxMp = 8, UnitMp = 8, UnitAtk = 5, UnitMag = 3 };
-            Enemy zombie = new Enemy() { UnitName = "Zombie", MaxHp = 15, UnitHp = 15, MaxMp = 10, UnitMp = 10, UnitAtk = 4, UnitMag = 5 };
+            Enemy slime = new Enemy() { UnitName = "Slime", MaxHp = 13, UnitHp = 13, MaxMp = 20, UnitMp = 20, UnitAtk = 2, UnitMag = 1 };
+            Enemy goblin = new Enemy() { UnitName = "Goblin", MaxHp = 20, UnitHp = 20, MaxMp = 20, UnitMp = 20, UnitAtk = 5, UnitMag = 3 };
+            Enemy zombie = new Enemy() { UnitName = "Zombie", MaxHp = 15, UnitHp = 15, MaxMp = 20, UnitMp = 20, UnitAtk = 4, UnitMag = 5 };
 
             Enemy[] enemies = [ slime, goblin, zombie ];
                 
@@ -136,9 +145,9 @@ namespace Turn_Based_Game
         {
             Random rnd = new Random();
 
-            Boss kingSlime = new Boss() { UnitName = "The Slime King", MaxHp = 50, UnitHp = 50, MaxMp = 5, UnitMp = 5, UnitAtk = 2, UnitMag = 1 };
-            Boss kingGoblin = new Boss() { UnitName = "The Goblin King", MaxHp = 50, UnitHp = 50, MaxMp = 12, UnitMp = 12, UnitAtk = 6, UnitMag = 3 };
-            Boss kingZombie = new Boss() { UnitName = "The Zombie King", MaxHp = 50, UnitHp = 50, MaxMp = 10, UnitMp = 10, UnitAtk = 5, UnitMag = 5 };
+            Boss kingSlime = new Boss() { UnitName = "The Slime King", MaxHp = 70, UnitHp = 70, MaxMp = 70, UnitMp = 70, UnitAtk = 15, UnitMag = 18 };
+            Boss kingGoblin = new Boss() { UnitName = "The Goblin King", MaxHp = 70, UnitHp = 70, MaxMp = 70, UnitMp = 70, UnitAtk = 15, UnitMag = 18 };
+            Boss kingZombie = new Boss() { UnitName = "The Zombie King", MaxHp = 70, UnitHp = 70, MaxMp = 70, UnitMp = 70, UnitAtk = 15, UnitMag = 18 };
 
             Boss[] bosses = [kingSlime, kingGoblin, kingZombie];
 
@@ -161,7 +170,6 @@ namespace Turn_Based_Game
              * Array if two numbers which determine which attack the enemy will use during their turn
             */
             enemy.enemySkills = [0, 1];
-            
 
             Console.WriteLine("");
             Console.WriteLine("---------------------------");
@@ -176,14 +184,13 @@ namespace Turn_Based_Game
             */
             while (player.UnitHp > 0 && enemy.UnitHp > 0) 
             {
-                Console.WriteLine("World level " + worldlvl);
                 Console.WriteLine("  \n" + playerName + "   Level " + player.lvl);
                 Console.WriteLine("HP: " + player.UnitHp + " " + "MP: " + player.UnitMp);
                 Console.WriteLine("");
                 Console.WriteLine(enemy.UnitName + "    Level " + enemy.lvl + "\nHP: " + enemy.UnitHp);
                 Console.WriteLine("");
                 Console.WriteLine("Your Turn! What will you do?");
-                Console.WriteLine("Press [A] to attack!\nPress [H] to heal!(Cost 3 MP)\nPress [F] to cast a magic spell!(Cost 5 MP)");
+                Console.WriteLine("Press [A] to attack!\nPress [H] to heal 40% of your maximum HP!(Cost " + healCost + " MP)\nPress [F] to cast a magic spell!(Cost " + magCost + " MP)");
                 
                 
                 /*
@@ -239,15 +246,15 @@ namespace Turn_Based_Game
                             break;
                         }
                         
-                        player.UnitHp += 5;
-                        player.UnitMp -= 3;
+                        player.UnitHp += (int)healAmount;
+                        player.UnitMp -= healCost;
                         
                         if (player.UnitHp > player.MaxHp)
                         {
                             player.UnitHp = player.MaxHp;
                         }
 
-                        Console.WriteLine(playerName + " recovers 5 HP!");
+                        Console.WriteLine(playerName + " recovers " + healAmount + " HP!");
                         Yeild();
                         break;
                     
@@ -261,7 +268,7 @@ namespace Turn_Based_Game
                             break;
                         }
 
-                        player.UnitMp -= 5;
+                        player.UnitMp -= magCost;
                         enemy.UnitHp -= player.UnitMag;
                         Console.WriteLine(playerName + " launched a magic attack that deals " + player.UnitMag + " damage to " + enemy.UnitName +"!");
                         Yeild();
@@ -386,7 +393,7 @@ namespace Turn_Based_Game
                 Console.WriteLine(boss.UnitName + "    Level " + boss.lvl + "\nHP: " + boss.UnitHp);
                 Console.WriteLine("");
                 Console.WriteLine("Your Turn! What will you do?");
-                Console.WriteLine("Press [A] to attack!\nPress [H] to heal!(Cost 3 MP)\nPress [F] to cast a magic spell!(Cost 5 MP)");
+                Console.WriteLine("Press [A] to attack!\nPress [H] to heal 40% of your maximum HP!(Cost " + healCost + " MP)\nPress [F] to cast a magic spell!(Cost " + magCost + " MP)");
 
                 String playerChoice = Console.ReadLine();
 
@@ -423,15 +430,15 @@ namespace Turn_Based_Game
                             break;
                         }
 
-                        player.UnitHp += 5;
-                        player.UnitMp -= 3;
+                        player.UnitHp += (int)healAmount;
+                        player.UnitMp -= healCost;
 
                         if (player.UnitHp > player.MaxHp)
                         {
                             player.UnitHp = player.MaxHp;
                         }
 
-                        Console.WriteLine(playerName + " recovers 5 HP!");
+                        Console.WriteLine(playerName + " recovers " + healAmount + " HP!");
                         Yeild();
                         break;
 
@@ -445,7 +452,7 @@ namespace Turn_Based_Game
                             break;
                         }
 
-                        player.UnitMp -= 5;
+                        player.UnitMp -= magCost;
                         boss.UnitHp -= player.UnitMag;
                         Console.WriteLine(playerName + " launched a magic attack that deals " + player.UnitMag + " damage to " + boss.UnitName + "!");
                         Yeild();
