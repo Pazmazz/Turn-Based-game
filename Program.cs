@@ -96,15 +96,6 @@ namespace Turn_Based_Game
         */
         public static Unit player = new Unit() { UnitName = playerName, MaxHp = 30, UnitHp = 30, MaxMp = 10, UnitMp = 10, UnitAtk = 5, UnitMag = 8 };
 
-        /* 
-         * Variables that determine the mp cost for each skill
-         * It's added to the player level so it scales properly throughout the game
-         * Heal amount scales of the players max hp and heals 40% percent of it
-        */
-        public static int healCost = 3 + worldlvl;
-        public static int magCost = 5 + worldlvl;
-        public static double healAmount = (int)player.MaxHp * 0.4;
-
         /*
          * The Yeild() function exist to pause the text so the player has time to read everything going on in the battle
         */
@@ -116,7 +107,7 @@ namespace Turn_Based_Game
         /*
          * This function spawns in three new enemy objects, puts them into an enemies[] array, and then a random enemy is selected from that array
          * 
-         * The foreach loop levels up all enemies in the array before they are selected
+         * The selected enemy is then leveled up
         */
         static Enemy RandomEnemy()
         {
@@ -127,13 +118,10 @@ namespace Turn_Based_Game
             Enemy zombie = new Enemy() { UnitName = "Zombie", MaxHp = 15, UnitHp = 15, MaxMp = 20, UnitMp = 20, UnitAtk = 4, UnitMag = 5 };
 
             Enemy[] enemies = [ slime, goblin, zombie ];
-                
-            foreach (Enemy e in enemies)
-            {
-                e.LevelUp(worldlvl);
-            }
 
             Enemy enemy = enemies[rnd.Next(enemies.Length)];
+
+            enemy.LevelUp(worldlvl);
 
             return enemy;
         }
@@ -171,7 +159,16 @@ namespace Turn_Based_Game
             */
             enemy.enemySkills = [0, 1];
 
-            Console.WriteLine("");
+            /* 
+             * Variables that determine the mp cost for each skill
+             * It's added to the player level so it scales properly throughout the game
+             * Heal amount scales of the players max hp and heals 40% percent of it
+            */
+            int healCost = 3 + worldlvl;
+            int magCost = 5 + worldlvl;
+            double healAmount = (int)player.MaxHp * 0.4;
+
+        Console.WriteLine("");
             Console.WriteLine("---------------------------");
             Console.WriteLine("      " + battleText + "       ");
             Console.WriteLine("---------------------------");
@@ -373,6 +370,15 @@ namespace Turn_Based_Game
             */
             int[] bossSkills = boss.enemySkills;
             bossSkills = [0, 1];
+
+            /* 
+             * Variables that determine the mp cost for each skill
+             * It's added to the player level so it scales properly throughout the game
+             * Heal amount scales of the players max hp and heals 40% percent of it
+            */
+            int healCost = 3 + worldlvl;
+            int magCost = 5 + worldlvl;
+            double healAmount = (int)player.MaxHp * 0.4;
 
             Console.WriteLine("");
             Console.WriteLine("---------------------------");
