@@ -74,10 +74,9 @@ namespace Turn_Based_Game
         /* 
          *Enums that determines if the player has won or lost a battle. This is to determine if the player needs their stats reset or not
         */
-        enum GameState
+        enum SatusEffects
         {
-            GAMEOVER,
-            VICTORY
+            //TODO: Add status effects
         }
 
         /* 
@@ -87,7 +86,6 @@ namespace Turn_Based_Game
         public static string title = "TextVenture!";
         public static string battleText = "Battle!";
         public static string bossText = "Boss Batle!";
-        static GameState gameState;
         public static int battleCount = 0;
         public static int worldlvl = 1;
 
@@ -206,7 +204,6 @@ namespace Turn_Based_Game
                             player.LevelUp();
                             battleCount++;
                             worldlvl++;
-                            gameState = GameState.VICTORY;
                             Yeild();
                             PlayAgain();
                         }
@@ -227,7 +224,6 @@ namespace Turn_Based_Game
                             player.LevelUp();
                             battleCount++;
                             worldlvl++;
-                            gameState = GameState.VICTORY;
                             Yeild();
                             PlayAgain();
                         }
@@ -276,7 +272,6 @@ namespace Turn_Based_Game
                             player.LevelUp();
                             battleCount++;
                             worldlvl++;
-                            gameState = GameState.VICTORY;
                             Yeild();
                             PlayAgain();
                         }
@@ -320,9 +315,8 @@ namespace Turn_Based_Game
                         if (player.UnitHp <= 0)
                         {
                             Console.WriteLine("Game Over!");
-                            gameState = GameState.GAMEOVER;
                             Yeild();
-                            PlayAgain();
+                            GameOver();
                         }
                         
                         break;
@@ -345,9 +339,8 @@ namespace Turn_Based_Game
                         if (player.UnitHp <= 0)
                         {
                             Console.WriteLine("Game Over!");
-                            gameState = GameState.GAMEOVER;
                             Yeild();
-                            PlayAgain();
+                            GameOver();
                         }
                         break;
                 }
@@ -420,7 +413,6 @@ namespace Turn_Based_Game
                             Console.WriteLine("You won the battle!");
                             player.LevelUp();
                             battleCount++;
-                            gameState = GameState.VICTORY;
                             Yeild();
                             PlayAgain();
                         }
@@ -468,7 +460,6 @@ namespace Turn_Based_Game
                             Console.WriteLine("You won the battle!");
                             player.LevelUp();
                             battleCount++;
-                            gameState = GameState.VICTORY;
                             Yeild();
                             PlayAgain();
                         }
@@ -500,9 +491,8 @@ namespace Turn_Based_Game
                         if (player.UnitHp <= 0)
                         {
                             Console.WriteLine("Game Over!");
-                            gameState = GameState.GAMEOVER;
                             Yeild();
-                            PlayAgain();
+                            GameOver();
                         }
                         break;
 
@@ -524,9 +514,8 @@ namespace Turn_Based_Game
                         if (player.UnitHp <= 0)
                         {
                             Console.WriteLine("Game Over!");
-                            gameState = GameState.GAMEOVER;
                             Yeild();
-                            PlayAgain();
+                            GameOver();
                         }
                         break;
                 }
@@ -534,17 +523,48 @@ namespace Turn_Based_Game
 
             PlayAgain();
         }
+        
+        static void GameOver()
+        {
+            Console.WriteLine("Would you like to try again?\n[Y] Yes\n[N] No");
 
+            String playerChoice = Console.ReadLine();
+
+            String newPlayerChoice = playerChoice.ToUpper();
+
+            switch (newPlayerChoice)
+            {
+                case "Y":
+                    player.lvl = 1;
+                    player.UnitHp = 30;
+                    player.UnitMp = 10;
+                    player.UnitAtk = 5;
+                    player.UnitMag = 8;
+                    battleCount = 0;
+                    worldlvl = 1;
+                    Battle();
+                    break;
+                
+                default:
+                    GameExit();
+                    break;
+            }
+
+            
+        }
+        
+        /*
+         * This method ask the player if they want to continue playing
+         */
         static void PlayAgain()
         {
             if (battleCount > 5)
             {
-                Console.WriteLine("Congradulations, you won!\nThanks for playing!");
-                Yeild();
-                Environment.Exit(0);
+                Console.WriteLine("Congradulations, you won!");
+                GameExit();
             }
             
-            Console.WriteLine("Want to play again?\n[Y] Yes\n[N] No");
+            Console.WriteLine("Are you ready for the next battle?\n[Y] Yes\n[N] No");
             
             String playerChoice = Console.ReadLine();
 
@@ -553,18 +573,6 @@ namespace Turn_Based_Game
             switch (newPlayerChoice)
             {
                 case "Y":
-                    if (gameState == GameState.GAMEOVER)
-                    {
-                        player.lvl = 1;
-                        player.UnitHp = 30;
-                        player.UnitMp = 10;
-                        player.UnitAtk = 5;
-                        player.UnitMag = 8;
-                        battleCount = 0;
-                        worldlvl = 1;
-                        Battle();
-                    }
-
                     if (battleCount == 5)
                     {
                         BossBattle();
@@ -572,14 +580,19 @@ namespace Turn_Based_Game
                     {
                         Battle();
                     }
-                    
                     break;
 
                 default:
-                    Console.WriteLine("Thanks for playing!");
-                    Yeild();
+                    GameExit();
                     break;
             }
+        }
+
+        static void GameExit()
+        {
+            Console.WriteLine("Thanks for playing!");
+            Yeild();
+            Environment.Exit(0);
         }
 
         static void Main(string[] args)
