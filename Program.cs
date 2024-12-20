@@ -523,7 +523,10 @@ namespace Turn_Based_Game
 
             PlayAgain();
         }
-        
+
+        /*
+         * This method serves as a game over screen and ask the player if they would like to continue
+         */
         static void GameOver()
         {
             Console.WriteLine("Would you like to try again?\n[Y] Yes\n[N] No");
@@ -554,7 +557,7 @@ namespace Turn_Based_Game
         }
         
         /*
-         * This method ask the player if they want to continue playing
+         * This method asks the player if they want to continue playing
          */
         static void PlayAgain()
         {
@@ -588,6 +591,9 @@ namespace Turn_Based_Game
             }
         }
 
+        /*
+         * Method for exiting the program after displaying a thank you message
+         */
         static void GameExit()
         {
             Console.WriteLine("Thanks for playing!");
