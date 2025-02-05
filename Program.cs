@@ -233,7 +233,7 @@ namespace Turn_Based_Game
                      * Player heals some HP if they have enough MP
                     */
                     case "H":
-                        if (player.UnitMp < 3)
+                        if (player.UnitMp < healCost)
                         {
                             Console.WriteLine("Not enought MP!");
                             break;
@@ -255,7 +255,7 @@ namespace Turn_Based_Game
                      * Player cast a magic spell if they have enough HP. The damage dealt is equivalent to the player's magic(player.UnitMag)
                     */
                     case "F":
-                        if (player.UnitMp < 5)
+                        if (player.UnitMp < magCost)
                         {
                             Console.WriteLine("Not enought MP!");
                             break;
@@ -422,7 +422,7 @@ namespace Turn_Based_Game
                      * Player heals some HP if they have enough MP
                     */
                     case "H":
-                        if (player.UnitMp < 3)
+                        if (player.UnitMp < healCost)
                         {
                             Console.WriteLine("Not enought MP!");
                             break;
@@ -444,7 +444,7 @@ namespace Turn_Based_Game
                      * Player cast a magic spell if they have enough HP. The damage dealt is equivalent to the player's magic(player.UnitMag)
                     */
                     case "F":
-                        if (player.UnitMp < 5)
+                        if (player.UnitMp < magCost)
                         {
                             Console.WriteLine("Not enought MP!");
                             break;
